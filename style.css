@@ -1,0 +1,82 @@
+@charset "utf-8";
+body{
+    margin:0;
+	  padding:0;
+    background-color: black;
+}
+
+p0{
+  display: flex;
+  justify-content: center;
+  margin-left: 150px;
+  margin-bottom: 20px;
+}
+
+.button{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.selectstetus{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+h2{
+  color:white;
+  text-align: center;
+}
+
+#inputfile{
+  display: flex;
+  justify-content: center;
+}
+
+lavel1{
+  color: white;
+}
+
+#replay_status{
+  display: flex;
+  justify-content: center;
+}
+
+#mycanvas {
+    border: 3px solid #ccc;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    margin: 0 auto;
+}
+
+#replay_status{
+    color :white;
+}
+
+#restart,#backskip,#stopbutton,#startbutton,#skip{
+  border: 4px inset gray;
+  background-color: white;
+  margin-left: 10px;
+}
+
+button.btn--red.btn--cubic {
+  border-bottom: 5px solid gray;
+}
+
+button.btn--red.btn--cubic:hover {
+  margin-top: 3px;
+  border-bottom: 2px solid gray;
+}
+
+button.btn--radius {
+  color:darkorange;
+  border-radius: 100vh;
+}
+
+.fa-position-right {
+  position: absolute;
+  top: calc(50% - .5em);
+  right: 1rem;
+}
