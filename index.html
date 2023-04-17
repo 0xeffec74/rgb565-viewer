@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>binファイル再生</title>
+    <script src="RGB.js"></script>
+    <script src="pix.js"></script>
+    <script>
+      var reader;
+      var files;
+      var playing = false;
+      var count;
+      var displaysize;
+      var ColorCode;
+      var timer;
+      var MaxFrames;
+
+      function onAddFile(event) {
+        clearTimeout(timer);
+        files = event.target.files || event.dataTransfer.files;
+        reader = new FileReader();
+        count = 0;
+        playing = true;
+        replay();
+      }
+
+      function replay() {
+        reader.onload = function (event) {
+          const raw = new Uint16Array(reader.result);
+          const canvas = document.getElementById("mycanvas");
+          MaxFrames = raw.length / 12800;
+
+          function putImageRecursively() {
+            dispconfig();
+            let loopflag = document.getElementById("playloop");
+            var movespeed = playspeed();
+            if (count >= MaxFrames) {
+              if (loopflag.checked) {
+                restart();
+              } else {
+                playing = false;
+                count = 0;
+              }
+            }
+            if (playing) {
+              putimage(canvas, raw, count, MaxFrames, displaysize, ColorCode);
+              count += 1;
+              replay_status.innerHTML = "フレーム数 " + count + "/" + MaxFrames;
+              timer = setTimeout(putImageRecursively, movespeed);
+            } else {
+              timer = setTimeout(putImageRecursively, movespeed);
+            }
+          }
+
+          putImageRecursively();
+        };
+
+        if (files[0]) {
+          reader.readAsArrayBuffer(files[0]);
+          document.getElementById("inputfile").value = "";
+        }
+      }
+
+      function playspeed() {
+        let playspeed = document.getElementById("SpeedSlider");
+        var speed;
+        switch (playspeed.value) {
+          case "1":
+            speed = 240;
+            break;
+          case "2":
+            speed = 120;
+            break;
+          case "3":
+            speed = 60;
+            break;
+          case "4":
+            speed = 30;
+            break;
+          case "5":
+            speed = 5;
+            break;
+        }
+
+        return speed;
+      }
+
+      function startbutton() {
+        var playbutton = document.getElementById("startbutton");
+        if (!playing) {
+          playing = true;
+          replay();
+        }
+      }
+
+      function stopbutton() {
+        var playbutton = document.getElementById("stopbutton");
+        if (playing) {
+          playing = false;
+          replay();
+        }
+      }
+
+      function restart() {
+        count = 0;
+        if (!playing) {
+          playing = true;
+        }
+        replay();
+      }
+
+      function dispconfig() {
+        let DISPSIZ = document.getElementById("disp_siz");
+        let DISPCOLOR = document.getElementById("disp_color");
+
+        displaysize = DISPSIZ.value;
+        ColorCode = DISPCOLOR.value;
+      }
+
+      function advance() {
+        console.log(MaxFrames);
+        if (count + 100 < MaxFrames) {
+          count += 100;
+        } else {
+          count = MaxFrames - 1;
+        }
+      }
+
+      function return_to() {
+        if (count > 100) {
+          count -= 100;
+        } else {
+          count = 0;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h2>binファイル出力画面</h2>
+    <canvas id="mycanvas" width="800" height="400"></canvas>
+    <br />
+      <p0><input
+        type="file"
+        id="inputfile"
+        name="inputfile[0]"
+        onchange="onAddFile(event);"
+      /></p0>
+      <div id="replay_status">フレーム数 描画枚数/最大枚数</div></lavel0
+    >
+    <div class="button">
+      <button onclick="restart()" href="" class="btn btn--red btn--radius btn--cubic">❚◀<i class="fas fa-angle-right fa-position-right"></i></button>
+      <!-- <button onclick="restart()" id="restart">❚◀</button> -->
+      <button onclick="return_to()" href="" class="btn btn--red btn--radius btn--cubic">◀◀<i class="fas fa-angle-right fa-position-right"></i></button>
+      <!-- <button onclick="return_to()" id="backskip">◀◀</button> -->
+      <button onclick="stopbutton()" href="" class="btn btn--red btn--radius btn--cubic">❚❚<i class="fas fa-angle-right fa-position-right"></i></button>
+      <!-- <button onclick="stopbutton()" id="stopbutton">❚❚</button> -->
+      <button onclick="startbutton()" href="" class="btn btn--red btn--radius btn--cubic">▶<i class="fas fa-angle-right fa-position-right"></i></button>
+      <!-- <button onclick="startbutton()" id="startbutton">▶</button> -->
+      <button onclick="advance()" href="" class="btn btn--red btn--radius btn--cubic">▶▶<i class="fas fa-angle-right fa-position-right"></i></button>
+      <!-- <button onclick="advance()" id="skip">▶▶</button> -->
+    </div>
+    <div class ="selectstetus">
+      <lavel1><input type="checkbox" id="playloop" /> ループ再生</lavel1>
+      🐢<input
+        type="range"
+        min="1"
+        max="5"
+        value="3"
+        step="1"
+        id="SpeedSlider"
+      />🐇
+      <select id="disp_siz" size="1">
+        <option value="1" selected>1x1</option>
+        <option value="2">2x2</option>
+        <option value="3">3x3</option>
+        <option value="4">4x4</option>
+        <option value="5">5x5</option>
+      </select>
+
+      <select id="disp_color" size="1">
+        <option value="0" selected>通常色</option>
+        <option value="1">グレースケール</option>
+        <option value="2">セピア</option>
+        <option value="3">反転色</option>
+      </select>
+    </div>      
+  </body>
+</html>
